@@ -51,6 +51,5 @@ class World():
 				newVehicle.orientation = car['orientation']
 				self.worldData['vehicles'].append(newVehicle)
 
-
 	def getWorldData(self):
 		return dict(self.worldData)

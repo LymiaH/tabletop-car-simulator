@@ -3,6 +3,7 @@ from cartracker import CarTracker
 from server import Server
 import cv2
 import time
+import capture_map
 
 
 def waitForSignal():
@@ -26,6 +27,7 @@ def track(cam, tracker):
 def main():
 	_ = Server()
 	cam = Camera()
+	capture_map.init(cam)
 	while True:
 		print("Started listen loop.")
 		tracker = CarTracker()

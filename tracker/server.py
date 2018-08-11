@@ -1,6 +1,7 @@
 import json
 import socketserver
 import threading
+import capture_map
 
 TRACKER_HOST = "0.0.0.0"
 TRACKER_PORT = 1520
@@ -31,12 +32,15 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 			try:
 				data = self.request.recv(BUF_SIZE)
 				message = data.decode('utf-8')
+				print("[TRACKER]: Message Recieved: " + message)
 				if message == "track":
 					response = encode_json(Server.latest_data)
 				elif message == "calibrate":
 					response = encode_json(Server.calibration)
 				elif message == "identify":
 					response = encode_json(Server.car_identification)
+				elif message == "capture_map":
+					response = encode_json(capture_map.get_response())
 				else:
 					response = "[TRACKER]: No arguments detected."
 				self.request.sendall(response.encode('utf-8'))

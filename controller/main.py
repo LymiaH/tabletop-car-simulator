@@ -1,7 +1,9 @@
+import os
+
 from controller.agent import Agent
 from controller.vision import Vision
 from controller.world import World
-from controller.display import Display
+from controller.display import Display, BLANK_MAP_PATH
 from controller.zenwheels.cars import *
 from controller.zenwheels.comms import CarCommunicator
 import time
@@ -41,9 +43,27 @@ def main(map_image_path, map_info_path, car_parameters, map_parameters):
 		print(msgHeader + "No cars enabled. Exiting...")
 		exit()
 
-	# Initialise world.
+	# Load Waypoints
 	f = open(map_info_path, 'rb')
 	waypoints = eval(f.read())
+
+	# Attempt to capture waypoints if flag waypoint is set
+	if len(waypoints) == 1 and frozenset(waypoints[0]) == frozenset([-457, -457, -457]):
+		display.blankScreen()
+		print(msgHeader + "Capture Waypoints map type detected!")
+		time.sleep(1)  # Wait for refresh
+		waypoints = []
+		for point in vision.get_capture_map_data():
+			# There's 3 values in the normal waypoint data, only the first two are used
+			point.append(0)
+			waypoints.append(point)
+		display.background_image_path = BLANK_MAP_PATH
+		display.background_image = display.loadBackground()
+		# display.generateBackgroundFromWaypoints(waypoints)
+		display.show_waypoints = True
+		display.DEBUG = True
+
+	# Initialise world.
 	world = World(agents, vehicles, waypoints, map_parameters)
 
 	# Display the car loading screen.

@@ -10,7 +10,7 @@ TRACKER_PORT = 1520
 BUF_SIZE = 1024
 
 TRACK_PHRASE = "track".encode('utf-8')
-
+CAPTURE_MAP_PHRASE = "capture_map".encode('utf-8')
 
 class Vision():
 	def __init__(self):
@@ -25,6 +25,18 @@ class Vision():
 	def get_tracker_data(self):
 		data = parse_json(self.client.send_message(TRACK_PHRASE))
 		return data
+
+	def get_capture_map_data(self):
+		print(msgHeader + "Requesting waypoint capture from tracker...")
+		data = parse_json(self.client.send_message(CAPTURE_MAP_PHRASE))
+		if data is not None and "waypoints" in data:
+			print(msgHeader + "Recieved " + str(len(data["waypoints"])) + " waypoint(s) from tracker.")
+			print(data)
+			return data["waypoints"]
+		else:
+			print(msgHeader + "No waypoints recieved from tracker.")
+			return []
+
 
 	# Return the ID, pixel coordinates and orientation of every ZenWheels car.
 	def locateCars(self):

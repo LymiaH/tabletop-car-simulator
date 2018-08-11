@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import os
 import math
+#import numpy as np
+#import cv2
 
 msgHeader = "[DISPLAY]: "
 
@@ -14,6 +16,8 @@ CALIBRATION_IMG_PATH = os.path.join(os.path.dirname(__file__), '..',
 DEFAULT_MAP_PATH = os.path.join(os.path.dirname(__file__), '..',
 								'resources', 'maps', 'autocars_default', 'map_default.png')
 
+BLANK_MAP_PATH = os.path.join(os.path.dirname(__file__), '..',
+								'resources', 'media', 'backgrounds', 'map_blank.png')
 
 class Display():
 	def __init__(self, map_image_path=None):
@@ -27,6 +31,7 @@ class Display():
 		self.background_image = self.loadBackground()
 		self.calibration_img = self.loadCalibrationImage()
 		self.isDisplaying = True
+		self.show_waypoints = False
 		print(msgHeader + "Initialisation complete.")
 
 	# Load and scale background image.
@@ -68,6 +73,11 @@ class Display():
 					self.screen.blit(marker, pos)
 				except Exception as e:
 					pass
+		if (self.show_waypoints or self.DEBUG) and 'waypoints' in worldData:
+			for way in worldData['waypoints']:
+				x = int(way[0] * 1600 / 640)
+				y = int(way[1] * 1200 / 480)
+				pygame.draw.circle(self.screen, (0, 0, 0), (x, y), 5, 1)
 
 	def connectingToTrackerScreen(self):
 		self.screen.fill((255, 255, 255))
@@ -100,6 +110,25 @@ class Display():
 			text = self.font.render("Calibrating camera perspective...", True, (0, 0, 0))
 		self.screen.blit(text, (DISPLAY_WIDTH - 500, DISPLAY_HEIGHT - 200))
 		pygame.display.flip()
+
+	def blankScreen(self):
+		self.screen.fill((255, 255, 255))
+		pygame.display.flip()
+
+	# def generateBackgroundFromWaypoints(self, waypoints):
+	# 	if len(waypoints) == 0:
+	# 		return
+	# 	C, R = self.background_image.get_rect().size
+	# 	temp = np.full([R, C], 255, np.uint8)
+	# 	temp = cv2.cvtColor(temp, cv2.GRAY2BGR)
+	# 	for way in waypoints:
+	# 		cv2.circle(temp, [way[0], way[1]], 3, (0, 0, 0), -1)
+	# 	try:
+	# 		self.background_image = pygame.image.frombuffer(temp.tostring(), temp.shape[1::-1], "RGB")
+	# 		self.scale_factor = DISPLAY_WIDTH / self.background_image.get_rect().size[0]
+	# 		self.background_image = pygame.transform.rotozoom(self.background_image, 0, self.scale_factor)
+	# 	except:
+	# 		print("Oh no, background image failed to generate!")
 
 	def connectingToCarsScreen(self):
 		self.screen.fill((255, 255, 255))
