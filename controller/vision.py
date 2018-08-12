@@ -7,7 +7,7 @@ msgHeader = "[VISION]: "
 TRACKER_HOST = "tracker.local"
 TRACKER_PORT = 1520
 
-BUF_SIZE = 1024
+BUF_SIZE = 1024*32
 
 TRACK_PHRASE = "track".encode('utf-8')
 CAPTURE_MAP_PHRASE = "capture_map".encode('utf-8')

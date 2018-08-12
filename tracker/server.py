@@ -6,7 +6,7 @@ import capture_map
 TRACKER_HOST = "0.0.0.0"
 TRACKER_PORT = 1520
 
-BUF_SIZE = 1024
+BUF_SIZE = 1024*32
 
 
 class Server():
